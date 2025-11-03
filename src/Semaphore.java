@@ -5,10 +5,19 @@ public class Semaphore {
     }
 
     public synchronized void waitSemaphore() throws InterruptedException {
-        // Waiting logic (to be implemented)
+        value--;
+        if (value < 0)
+        try {
+            wait();
+        } catch (Exception e) {
+
+        }
     }
 
     public synchronized void signal() {
-        // Signaling logic (to be implemented)
+        value++;
+        if (value <= 0) {
+            notifyAll();
+        }
     }
 }
