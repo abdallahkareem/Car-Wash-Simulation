@@ -2,44 +2,59 @@ import java.util.Queue;
 
 public class Pump extends Thread {
 
-    private int pumpId;
-    private Queue<Car> queue;
-    private Semaphore empty;
-    private Semaphore full;
-    private Semaphore mutex;
-    private Semaphore pumps;
+    private final int pumpId;
+    private final Queue<Car> queue;
+    private final Semaphore empty;
+    private final Semaphore full;
+    private final Semaphore mutex;
+    private final Semaphore pumps;
+    private final ServiceStationGUI gui;
 
-    public Pump(int pumpId, Queue<Car> queue, Semaphore empty, Semaphore full, Semaphore mutex, Semaphore pumps) {
+    private volatile boolean running = true;
+
+    public Pump(int pumpId, Queue<Car> queue, Semaphore empty, Semaphore full, Semaphore mutex, Semaphore pumps, ServiceStationGUI gui) {
         this.pumpId = pumpId;
         this.queue = queue;
         this.empty = empty;
         this.full = full;
         this.mutex = mutex;
         this.pumps = pumps;
+        this.gui = gui;
     }
 
-    // ===== Thread Run Method =====
+    public void stopRunning() {
+        running = false;
+        interrupt();
+    }
+
     @Override
     public void run() {
-        try {
-            while (true) {
+        while (running) {
+            try {
                 pumps.waitSemaphore();
                 full.waitSemaphore();
                 mutex.waitSemaphore();
+
+                if (!running) break;
+
                 Car car = queue.poll();
-                System.out.println("Pump " + pumpId + " is servicing Car " + car.getCarId() + ".");
+                gui.updateQueueDisplay(queue);
+                gui.updatePumpStatus(pumpId, true, "Car " + car.getCarId());
+
                 mutex.signal();
-                Thread.sleep(1000); // Simulate time to start servicing
-                System.out.println("Pump " + pumpId + " has finished servicing Car " + car.getCarId() + ".");
+
+                gui.appendLog("Pump " + pumpId + " servicing Car " + car.getCarId());
+                Thread.sleep(gui.getServiceTimeMillis());
+
+                gui.updatePumpStatus(pumpId, false, "");
+                gui.appendLog("Pump " + pumpId + " finished Car " + car.getCarId());
+
                 empty.signal();
                 pumps.signal();
 
-                if (Thread.interrupted()) {
-                    break;
-                }
+            } catch (InterruptedException e) {
+                break;
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }

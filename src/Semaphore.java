@@ -7,7 +7,7 @@ public class Semaphore {
 
     public synchronized void waitSemaphore() throws InterruptedException {
         value--;
-        if (value < 0){
+        if (value < 0) {
             wait();
         }
     }
