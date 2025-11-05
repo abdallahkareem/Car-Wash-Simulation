@@ -46,6 +46,12 @@ public class ServiceStation {
         for(int i= 1 ; i <= queueSize ; i++) {
         	Car car = new Car(i,queue,empty,full,mutex);
         	car.start();
+            try{
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            
         }
         
     }

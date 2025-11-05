@@ -2,22 +2,20 @@ public class Semaphore {
     private int value;
 
     public Semaphore(int initial) {
+        this.value = initial;
     }
 
     public synchronized void waitSemaphore() throws InterruptedException {
         value--;
-        if (value < 0)
-        try {
+        if (value < 0){
             wait();
-        } catch (Exception e) {
-
         }
     }
 
     public synchronized void signal() {
         value++;
         if (value <= 0) {
-            notifyAll();
+            notify();
         }
     }
 }
