@@ -28,8 +28,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ServiceStationGUI extends JFrame {
 
-    private final int numPumps;
-    private final PumpPanel[] pumpPanels;
+    private int numPumps;       // remove final
+    private PumpPanel[] pumpPanels;  // remove final
     private final DefaultListModel<String> queueListModel = new DefaultListModel<>();
     private final JList<String> queueList = new JList<>(queueListModel);
     private final JTextArea logArea = new JTextArea();
@@ -38,6 +38,8 @@ public class ServiceStationGUI extends JFrame {
     private final JSpinner pumpsSpinner;
     private volatile int serviceTimeMillis = 3000; // default
     private final AtomicInteger logCounter = new AtomicInteger(0);
+    private final JSpinner carsSpinner; // <--- ADD THIS
+    private JPanel pumpsGrid;
 
     public ServiceStationGUI(int numPumps) {
         super("Service Station Simulator");
@@ -75,8 +77,20 @@ public class ServiceStationGUI extends JFrame {
         JPanel pumpsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         pumpsPanel.add(new JLabel("Pumps:"));
         pumpsSpinner = new JSpinner(new SpinnerNumberModel(this.numPumps, 1, 100, 1));
-        pumpsSpinner.setEnabled(false);
+        pumpsSpinner.setEnabled(true);
         pumpsPanel.add(pumpsSpinner);
+
+        // cars count selector
+        JPanel carsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        carsPanel.add(new JLabel("Cars:"));
+        carsSpinner = new JSpinner(new SpinnerNumberModel(10, 1, 500, 1)); // default 10 cars
+        carsSpinner.setPreferredSize(new Dimension(80, 26));
+        carsPanel.add(carsSpinner);
+
+// Add to topBar under pumps section
+        topBar.add(carsPanel, BorderLayout.SOUTH);
+
+
 
         topBar.add(controls, BorderLayout.WEST);
         topBar.add(serviceTimePanel, BorderLayout.CENTER);
@@ -89,7 +103,7 @@ public class ServiceStationGUI extends JFrame {
         centerPanel.setBorder(new EmptyBorder(0, 8, 8, 8));
 
         // Pumps grid
-        JPanel pumpsGrid = new JPanel();
+        pumpsGrid = new JPanel();
         int cols = Math.min(4, Math.max(1, this.numPumps));
         int rows = (int) Math.ceil((double) this.numPumps / cols);
         pumpsGrid.setLayout(new GridLayout(rows, cols, 12, 12));
@@ -417,6 +431,61 @@ public class ServiceStationGUI extends JFrame {
     }
     public int getServiceTimeMillis() {
         return serviceTimeMillis;
+    }
+    public int getSelectedNumPumps() {
+        return (Integer) pumpsSpinner.getValue();
+    }
+
+    public int getSelectedMaxCars() {
+        return (Integer) carsSpinner.getValue();
+    }
+
+    public void rebuildPumpPanels(int newPumpCount) {
+        // update stored count
+        this.numPumps = Math.max(1, newPumpCount);
+
+        // clear existing UI panels
+        if (pumpsGrid != null) {
+            pumpsGrid.removeAll();
+        } else {
+            // safety: if pumpsGrid was null for some reason, find/create it
+            pumpsGrid = new JPanel();
+            // note: the constructor normally creates pumpsGrid, so this branch rarely runs
+        }
+
+        // reallocate panel array to the new size
+        pumpPanels = new PumpPanel[this.numPumps];
+
+        // compute grid and lay out new panels
+        int cols = Math.min(4, Math.max(1, this.numPumps));
+        int rows = (int) Math.ceil((double) this.numPumps / cols);
+        pumpsGrid.setLayout(new GridLayout(rows, cols, 12, 12));
+        pumpsGrid.setBorder(BorderFactory.createTitledBorder("Pumps"));
+
+        for (int i = 0; i < this.numPumps; i++) {
+            PumpPanel p = new PumpPanel(i + 1);
+            pumpPanels[i] = p;
+            pumpsGrid.add(p);
+        }
+
+        // refresh UI in EDT
+        SwingUtilities.invokeLater(() -> {
+            pumpsGrid.revalidate();
+            pumpsGrid.repaint();
+        });
+    }
+
+    public void updatePumpState(int pumpId, String label) {
+        if (pumpPanels == null || pumpId < 1 || pumpId > pumpPanels.length) return;
+        PumpPanel panel = pumpPanels[pumpId - 1];
+
+        SwingUtilities.invokeLater(() -> {
+            if (label == null || label.isEmpty() || label.equals("FREE")) {
+                panel.setOccupied(false, "");
+            } else {
+                panel.setOccupied(true, label);
+            }
+        });
     }
 
 }
