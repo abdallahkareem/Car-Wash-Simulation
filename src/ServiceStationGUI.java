@@ -226,7 +226,7 @@ public class ServiceStationGUI extends JFrame {
         if (pumpId < 1 || pumpId > numPumps) return;
         PumpPanel p = pumpPanels[pumpId - 1];
         p.setOccupied(occupied, text);
-        appendLog(String.format("Pump %d %s %s", pumpId, (occupied ? "occupied by" : "released from"), text));
+        appendLog(String.format("Pump %d %s %s", pumpId, (occupied ? "occupied by" : "Is now free"), text));
     }
 
     /**
