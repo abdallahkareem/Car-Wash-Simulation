@@ -34,7 +34,7 @@ public class ServiceStationGUI extends JFrame {
     private final JList<String> queueList = new JList<>(queueListModel);
     private final JTextArea logArea = new JTextArea();
     private final JButton startButton = new JButton("Start");
-    private final JButton stopButton = new JButton("Restart");
+    private final JButton stopButton = new JButton("Stop");
     private final JSpinner pumpsSpinner;
     private volatile int serviceTimeMillis = 3000; // default
     private final AtomicInteger logCounter = new AtomicInteger(0);
