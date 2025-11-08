@@ -1,12 +1,12 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.util.Queue;
-import java.util.TimerTask;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 /**
  * ServiceStationGUI
@@ -36,7 +36,7 @@ public class ServiceStationGUI extends JFrame {
     private final JButton startButton = new JButton("Start");
     private final JButton stopButton = new JButton("Stop");
     private final JSpinner pumpsSpinner;
-    private volatile int serviceTimeMillis = 3000; // default
+    private volatile int serviceTimeMillis = 3000; // defaultx  
     private final AtomicInteger logCounter = new AtomicInteger(0);
     private final JSpinner carsSpinner; // <--- ADD THIS
     private JPanel pumpsGrid;
@@ -183,15 +183,15 @@ public class ServiceStationGUI extends JFrame {
             statusLabel.setText("Restarting...");
 
             // Ensure no clicks break logic state
-            startButton.setEnabled(false);
+            startButton.setEnabled(true);
             stopButton.setEnabled(false);
 
             // Run restart logic
             if (stopAction != null) stopAction.actionPerformed(null);
 
             // Re-enable buttons in running state
-            startButton.setEnabled(false);
-            stopButton.setEnabled(true);
+            startButton.setEnabled(true);
+            stopButton.setEnabled(false);
             statusLabel.setText("Running");
         });
 

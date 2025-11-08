@@ -37,9 +37,10 @@ public class Pump extends Thread {
 
                 if (!running) break;
 
-                Car car = queue.poll();
-                gui.updateQueueDisplay(queue);
-                gui.updatePumpStatus(pumpId, true, "Car " + car.getCarId());
+                // select the first element in queue and if it null doesn`t do any thing 
+                 Car car = queue.poll();
+                 gui.updateQueueDisplay(queue);
+                 gui.updatePumpStatus(pumpId, true, "Car " + car.getCarId());
 
                 mutex.signal();
 
