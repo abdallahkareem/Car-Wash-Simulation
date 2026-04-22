@@ -1,6 +1,6 @@
-# 🚗 Car Wash & Gas Station Simulation (Java Multithreading)
+# Car Wash & Gas Station Simulation (Java Multithreading)
 
-## 📌 Overview
+## Overview
 This Java project simulates a **Car Wash and Gas Station** using the **Producer-Consumer Problem** with a **Bounded Buffer Pattern**. It models a service station with:
 
 - A fixed number of service bays (pumps)
@@ -10,7 +10,7 @@ This Java project simulates a **Car Wash and Gas Station** using the **Producer-
 
 ---
 
-## 🧱 Components
+## Components
 
 | Class            | Description                                                                 |
 |------------------|-----------------------------------------------------------------------------|
@@ -21,7 +21,7 @@ This Java project simulates a **Car Wash and Gas Station** using the **Producer-
 
 ---
 
-## 🔁 Simulation Flow
+## Simulation Flow
 
 1. Cars arrive at the station and wait if the queue is full.
 2. Pumps continuously check for available cars and service them.
@@ -32,7 +32,7 @@ This Java project simulates a **Car Wash and Gas Station** using the **Producer-
 
 ---
 
-## ✨ Example
+## Example
 
 **Sample Input**
 - Waiting area capacity: `5`
